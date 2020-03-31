@@ -33,13 +33,6 @@ int main(int argc, char *argv[])
         return -1;
     };
 
-    memset(recvBuff, '0',sizeof(recvBuff));
-    if((sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
-    {
-        fprintf(stderr, "\n Error : Could not create socket \n");
-        return 1;
-    } 
-
     memset(&serv_addr, '0', sizeof(serv_addr)); 
 
     serv_addr.sin_family = AF_INET;
@@ -51,26 +44,47 @@ int main(int argc, char *argv[])
         return 1;
     } 
 
-    if( connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
-    {
-       fprintf(stderr, "\n Error : Connect Failed \n");
-       return 1;
-    } 
+    char request;
+    int n;
+    while (1){
 
-    int n = 3;
-    snprintf(sendBuff, sizeof(sendBuff), "%d", n);
-    write(sockfd, sendBuff, strlen(sendBuff)); 
+        if (scanf("%c%d", &request, &n) == EOF) {       
+            break;
+        }
+        
+        if (request == 'T') {
+            memset(recvBuff, '0',sizeof(recvBuff));
+            memset(sendBuff, '0',sizeof(sendBuff));
+            if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
+            {
+                fprintf(stderr, "\n Error : Could not create socket \n");
+                return 1;
+            } 
 
-    while ( (valread = read(sockfd, recvBuff, sizeof(recvBuff)-1)) > 0)
-    {
-        recvBuff[valread] = 0;
-        fprintf(stdout, "1583256162.00: Recv (D%3s)\n", recvBuff);
-    } 
+            if( connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
+            {
+                fprintf(stderr, "\n Error : Connect Failed \n");
+                return 1;
+            } 
+            snprintf(sendBuff, sizeof(sendBuff), "%d", n);
+            write(sockfd, sendBuff, strlen(sendBuff)); 
+            fprintf(stdout, "1583256162.00: Send (T%3s)\n", sendBuff);
 
-    if(valread < 0)
-    {
-        fprintf(stderr, "\n Read error \n");
-    } 
+            valread = read(sockfd, recvBuff, sizeof(recvBuff)-1);
+            recvBuff[valread] = 0;
+            fprintf(stdout, "1583256162.00: Recv (D%3s)\n", recvBuff);
+
+            if ( valread < 0)
+            {
+                fprintf(stderr, "\n Read error \n");
+            } 
+        } else if (request == 'S') {
+            printf("%c %d\n", request, n);
+        } 
+        getchar(); // read a newline char
+    }
+
+
 
     return 0;
 }

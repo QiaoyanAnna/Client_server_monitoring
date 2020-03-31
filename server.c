@@ -23,7 +23,6 @@ int main(int argc, char *argv[])
     struct sockaddr_in serv_addr; 
 
     char sendBuff[3], recvBuff[10];
-    time_t ticks; 
 
     if(argc != 2) 
     {
@@ -39,7 +38,6 @@ int main(int argc, char *argv[])
 
     listenfd = socket(AF_INET, SOCK_STREAM, 0);
     memset(&serv_addr, '0', sizeof(serv_addr));
-    memset(sendBuff, '0', sizeof(sendBuff)); 
 
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
@@ -49,10 +47,12 @@ int main(int argc, char *argv[])
 
     listen(listenfd, 10); 
 
+    int numOfTran = 0;
     while(1)
     {
         connfd = accept(listenfd, (struct sockaddr*)NULL, NULL); 
-
+        
+        memset(recvBuff, '0',sizeof(recvBuff));
         valread = read(connfd, recvBuff, sizeof(recvBuff)-1);
         recvBuff[valread] = 0;
         fprintf(stdout, "1583256161.99: # 1 (T%3s) from ug11.20295\n", recvBuff);
@@ -62,8 +62,10 @@ int main(int argc, char *argv[])
             fprintf(stderr, "\n Read error \n");
         } 
 
-        int n = atoi(recvBuff);
-        snprintf(sendBuff, sizeof(sendBuff), "%d", n);
+        numOfTran++;
+        printf("numOfTran: %d\n", numOfTran);
+        memset(sendBuff, '0', sizeof(sendBuff)); 
+        snprintf(sendBuff, sizeof(sendBuff), "%d", numOfTran);
         write(connfd, sendBuff, strlen(sendBuff)); 
 
         close(connfd);
