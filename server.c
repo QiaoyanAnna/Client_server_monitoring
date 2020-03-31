@@ -22,7 +22,7 @@
 #define MAX_NUMBER_OF_MACHINE 1000
 
 int numOfTran = 0, numOfConn = 0;
-clock_t startRecv, serverEnd;
+clock_t startRecv, serverEnd, serverStart;
 struct Connection 
 {
     char *machineName;
@@ -51,8 +51,6 @@ int main(int argc, char *argv[])
         return -1;
     };
 
-    printf("port: %d\n", port);
-
     listenfd = socket(AF_INET, SOCK_STREAM, 0);
     memset(&serv_addr, '0', sizeof(serv_addr));
 
@@ -64,7 +62,7 @@ int main(int argc, char *argv[])
 
     listen(listenfd, 10); 
 
-    clock_t serverStart = clock();
+    
     startRecv = clock();
     if( pthread_create( &ntid, NULL, process, (void *) (size_t) listenfd ) ) {
         fprintf(stderr, "Error occured while creating thread.\n");
@@ -80,7 +78,6 @@ int main(int argc, char *argv[])
             for (int i = 0; i < numOfConn; i++) {
                 fprintf(stdout, "  %d transactions from %s\n", conn[i]->numOfTrans, conn[i]->machineName);
             }
-            // fprintf(stdout, "  15 transactions from ug11.20296\n");
             fprintf(stdout, "%0.1f transactions/sec (%d/%0.1f)\n", transPerSec, numOfTran, duration);
             break;
         }
@@ -95,6 +92,7 @@ void *process(void *arg) {
     char *nStr, *machine, *machineInfo;
     struct timespec spec;
 
+    serverStart = clock();
     while(1)
     {
         connfd = accept(listenfd, (struct sockaddr*)NULL, NULL); 
@@ -103,6 +101,7 @@ void *process(void *arg) {
         valread = read(connfd, recvBuff, sizeof(recvBuff)-1);
         recvBuff[valread] = 0;
         clock_gettime(CLOCK_REALTIME, &spec);
+        serverEnd = clock();
         numOfTran++;
         nStr = strtok(recvBuff, "&");
         machine = strtok(NULL, "&");
@@ -150,7 +149,6 @@ void *process(void *arg) {
         clock_gettime(CLOCK_REALTIME, &spec);
         fprintf(stdout, "%ld.%02ld: #%3d (Done) from %s\n", spec.tv_sec, getMilliseconds(spec, spec.tv_sec), numOfTran, machine);
         close(connfd);
-        sleep(1);
-        serverEnd = clock();
+        
      }
 }
