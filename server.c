@@ -22,13 +22,12 @@
 #define MAX_NUMBER_OF_MACHINE 1000
 
 int numOfTran = 0, numOfConn = 0;
-clock_t startRecv;
+clock_t startRecv, serverEnd;
 struct Connection 
 {
     char *machineName;
     int numOfTrans;
 };
-
 struct Connection **conn;
 
 void *process(void *arg);
@@ -72,11 +71,10 @@ int main(int argc, char *argv[])
 	}
 
     while (1) {
-        clock_t endRecv = clock();
-        double waitingTime = ((double) (endRecv - startRecv)) / CLOCKS_PER_SEC;
+        double waitingTime = ((double) (clock() - startRecv)) / CLOCKS_PER_SEC;
         if (waitingTime > MAX_WAITING_TIME) {
             pthread_kill(ntid, 0);
-            double duration = ((double) (endRecv - serverStart)) / CLOCKS_PER_SEC;
+            double duration = ((double) (serverEnd - serverStart)) / CLOCKS_PER_SEC;
             double transPerSec = numOfTran / duration;
             fprintf(stdout, "\nSUMMARY\n");    
             for (int i = 0; i < numOfConn; i++) {
@@ -110,7 +108,7 @@ void *process(void *arg) {
         machine = strtok(NULL, "&");
         machineInfo = (char*)malloc(128*sizeof(char));
         strcpy(machineInfo, machine);
-        fprintf(stdout, "%ld.%2ld: #%3d (T%3s) from %s\n", spec.tv_sec, getMilliseconds(spec, spec.tv_sec), numOfTran, nStr, machine);
+        fprintf(stdout, "%ld.%02ld: #%3d (T%3s) from %s\n", spec.tv_sec, getMilliseconds(spec, spec.tv_sec), numOfTran, nStr, machine);
         startRecv = clock();
         
         if(valread < 0)
@@ -150,8 +148,9 @@ void *process(void *arg) {
         snprintf(sendBuff, sizeof(sendBuff), "%d", numOfTran);
         write(connfd, sendBuff, strlen(sendBuff)); 
         clock_gettime(CLOCK_REALTIME, &spec);
-        fprintf(stdout, "%ld.%2ld: #%3d (Done) from %s\n", spec.tv_sec, getMilliseconds(spec, spec.tv_sec), numOfTran, machine);
+        fprintf(stdout, "%ld.%02ld: #%3d (Done) from %s\n", spec.tv_sec, getMilliseconds(spec, spec.tv_sec), numOfTran, machine);
         close(connfd);
         sleep(1);
+        serverEnd = clock();
      }
 }
