@@ -3,6 +3,8 @@
 #include <string.h> 
 #include <stdbool.h>
 #include <ctype.h> 
+#include <math.h>
+#include <time.h>
 
 #include "verify.h"
 
@@ -31,4 +33,18 @@ int getPortNum(int argc, char *argv[]) {
     }
     
     return port;
+}
+
+// reference: https://stackoverflow.com/questions/3756323/how-to-get-the-current-time-in-milliseconds-from-c-in-linux [Accessed Mar.31, 2020]
+long getMilliseconds(struct timespec spec, time_t seconds)
+{
+    long milliseconds;
+    
+    milliseconds = round(spec.tv_nsec / 1.0e7);
+    if (milliseconds > 99) {
+        seconds++;
+        milliseconds = 0;
+    } 
+
+    return milliseconds;
 }

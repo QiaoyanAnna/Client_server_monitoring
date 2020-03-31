@@ -83,6 +83,7 @@ void *process(void *arg) {
     int listenfd = (int)arg;
     int connfd = 0, valread = 0;
     char sendBuff[3], recvBuff[10];
+    struct timespec spec;
 
     while(1)
     {
@@ -93,7 +94,8 @@ void *process(void *arg) {
         recvBuff[valread] = 0;
         numOfTran++;
         startRecv = clock();
-        fprintf(stdout, "1583256161.99: #%3d (T%3s) from ug11.20295\n", numOfTran, recvBuff);
+        clock_gettime(CLOCK_REALTIME, &spec);
+        fprintf(stdout, "%ld.%ld: #%3d (T%3s) from ug11.20295\n", spec.tv_sec, getMilliseconds(spec, spec.tv_sec), numOfTran, recvBuff);
 
         if(valread < 0)
         {
@@ -105,7 +107,8 @@ void *process(void *arg) {
         memset(sendBuff, '0', sizeof(sendBuff)); 
         snprintf(sendBuff, sizeof(sendBuff), "%d", numOfTran);
         write(connfd, sendBuff, strlen(sendBuff)); 
-        fprintf(stdout, "1583256161.99: #%3d (Done) from ug11.20295\n", numOfTran);
+        clock_gettime(CLOCK_REALTIME, &spec);
+        fprintf(stdout, "%ld.%ld: #%3d (Done) from ug11.20295\n", spec.tv_sec, getMilliseconds(spec, spec.tv_sec), numOfTran);
         close(connfd);
         sleep(1);
      }

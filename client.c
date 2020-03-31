@@ -13,6 +13,7 @@
 #include <arpa/inet.h> 
 #include <stdbool.h>
 #include <ctype.h> 
+#include <time.h>
 
 #include "verify.h"
 #include "tands.h"
@@ -22,8 +23,10 @@ int main(int argc, char *argv[])
     int sockfd = 0, valread = 0, numOfTran = 0; 
     int port, n;
     char request;
-    char recvBuff[3], sendBuff[10], outputFileName[15];;
+    char recvBuff[3], sendBuff[10], outputFileName[15], hostname[256];
     struct sockaddr_in serv_addr; 
+    struct timespec spec;
+    pid_t pid;
 
     if(argc != 3)
     {
@@ -47,6 +50,11 @@ int main(int argc, char *argv[])
 
     char machinename[6] = "ug11";
     char pid[6] = "20295";
+    if (gethostname(hostname, sizeof(hostname) == -1)) 
+    {
+        fprintf(stderr, "Error occured while getting the host name");
+    }
+
 
     strcpy(outputFileName, machinename);
     strcat(outputFileName, ".");
@@ -81,12 +89,14 @@ int main(int argc, char *argv[])
             // send
             snprintf(sendBuff, sizeof(sendBuff), "%d", n);
             write(sockfd, sendBuff, strlen(sendBuff)); 
-            fprintf(stdout, "1583256162.00: Send (T%3s)\n", sendBuff);
+            clock_gettime(CLOCK_REALTIME, &spec);
+            fprintf(stdout, "%ld.%ld: Send (T%3s)\n", spec.tv_sec, getMilliseconds(spec, spec.tv_sec), sendBuff);
             numOfTran++;
             // receive
             valread = read(sockfd, recvBuff, sizeof(recvBuff)-1);
             recvBuff[valread] = 0;
-            fprintf(stdout, "1583256162.00: Recv (D%3s)\n", recvBuff);
+            clock_gettime(CLOCK_REALTIME, &spec);
+            fprintf(stdout, "%ld.%ld: Recv (D%3s)\n", spec.tv_sec, getMilliseconds(spec, spec.tv_sec), recvBuff);
 
             if ( valread < 0)
             {
