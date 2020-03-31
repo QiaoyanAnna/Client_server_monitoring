@@ -1,0 +1,36 @@
+outputFileName: Annabelles-MBP.hitronhub.home.73558
+Using port 5000
+Using server address 127.0.0.1
+Host Annabelles-MBP.hitronhub.home.73558
+1585685586.18: Send (T  1)
+1585685586.18: Recv (D  1)
+1585685586.18: Send (T 20)
+1585685587.20: Recv (D  2)
+1585685587.20: Send (T500)
+1585685588.64: Recv (D  3)
+1585685588.64: Send (T  1)
+1585685589.65: Recv (D  4)
+1585685589.65: Send (T  1)
+1585685590.65: Recv (D  5)
+1585685590.65: Send (T  1)
+1585685591.66: Recv (D  6)
+1585685591.66: Send (T 10)
+1585685592.67: Recv (D  7)
+1585685592.67: Send (T 10)
+1585685593.68: Recv (D  8)
+Sleep 50 units
+1585685594.18: Send (T 60)
+1585685594.74: Recv (D  9)
+1585685594.74: Send (T  1)
+1585685595.74: Recv (D 10)
+1585685595.74: Send (T  1)
+1585685596.74: Recv (D 11)
+Sleep 20 units
+1585685596.95: Send (T  1)
+1585685597.75: Recv (D 12)
+Sleep 1 units
+1585685597.76: Send (T 50)
+1585685598.80: Recv (D 13)
+1585685598.80: Send (T  1)
+1585685599.80: Recv (D 14)
+Sent 14 transactions
