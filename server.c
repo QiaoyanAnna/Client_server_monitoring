@@ -1,5 +1,6 @@
 // From: www.thegeekstuff.com/2011/12/c-socket-programming
 // Note that port# 5000 is hard-coded into this implementation
+#define _POSIX_C_SOURCE 200809L
 
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -20,7 +21,6 @@
 
 #define MAX_WAITING_TIME 30
 #define MAX_NUMBER_OF_MACHINE 1000
-#define _POSIX_C_SOURCE 200809L
 
 int numOfTran = 0, numOfConn = 0;
 clock_t startRecv, serverEnd, serverStart;
