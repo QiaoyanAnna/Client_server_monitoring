@@ -15,6 +15,7 @@
 #include <stdbool.h>
 #include <ctype.h> 
 #include <pthread.h>
+#include <signal.h>
 
 #include "verify.h"
 #include "tands.h"
@@ -65,7 +66,7 @@ int main(int argc, char *argv[])
 
     
     startRecv = clock();
-    if( pthread_create( &ntid, NULL, process, (void *) (size_t) listenfd ) ) {
+    if( pthread_create( &ntid, NULL, process, (void *) &listenfd ) ) {
         fprintf(stderr, "Error occured while creating thread.\n");
 	}
 
@@ -87,7 +88,7 @@ int main(int argc, char *argv[])
 
 void *process(void *arg) {
     int n;
-    int listenfd = (int)arg;
+    int listenfd = *((int *)arg);
     int connfd = 0, valread = 0;
     char sendBuff[8], recvBuff[256];
     char *nStr, *machine, *machineInfo;
