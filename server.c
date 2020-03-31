@@ -86,10 +86,9 @@ int main(int argc, char *argv[])
     }
 
     for (int i = 0; i < numOfConn; i++) {
-        free(conn[numOfConn]->machineName);
-        free(conn[numOfConn]->numOfTrans);
+        free(conn[i]->machineName);
+        free(conn[i]);
     }
-    free(conn[numOfConn]);
     free(conn);
     
 }
