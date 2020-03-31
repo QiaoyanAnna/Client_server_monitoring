@@ -82,7 +82,7 @@ void *process(void *arg) {
     int n;
     int listenfd = (int)arg;
     int connfd = 0, valread = 0;
-    char sendBuff[3], recvBuff[10];
+    char sendBuff[8], recvBuff[256];
     struct timespec spec;
 
     while(1)

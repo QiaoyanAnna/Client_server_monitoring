@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
     int sockfd = 0, valread = 0, numOfTran = 0; 
     int port, n;
     char request;
-    char recvBuff[3], sendBuff[10], outputFileName[128], machinename[64], pidStr[32];
+    char recvBuff[8], sendBuff[256], outputFileName[128], machinename[64], pidStr[32];
     struct sockaddr_in serv_addr; 
     struct timespec spec;
     pid_t pid;
@@ -53,14 +53,13 @@ int main(int argc, char *argv[])
         fprintf(stderr, "Error occured while getting the host name");
     }
     pid = getpid();
-    // itoa(pid, pidStr, 10);
     sprintf(pidStr, "%d", pid); 
 
     strcpy(outputFileName, machinename);
     strcat(outputFileName, ".");
     strcat(outputFileName, pidStr);
     stdout = fopen(outputFileName, "w");
-    
+
     fprintf(stdout, "Using port %d\n", port);
     fprintf(stdout, "Using server address %s\n", argv[2]);
     fprintf(stdout, "Host %s.%s\n", machinename, pidStr);
