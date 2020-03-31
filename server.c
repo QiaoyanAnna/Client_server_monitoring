@@ -52,6 +52,7 @@ int main(int argc, char *argv[])
     while(1)
     {
         connfd = accept(listenfd, (struct sockaddr*)NULL, NULL); 
+
         valread = read(connfd, recvBuff, sizeof(recvBuff)-1);
         recvBuff[valread] = 0;
         fprintf(stdout, "1583256161.99: # 1 (T%3s) from ug11.20295\n", recvBuff);
@@ -60,7 +61,8 @@ int main(int argc, char *argv[])
         {
             fprintf(stderr, "\n Read error \n");
         } 
-        int n = 10;
+
+        int n = atoi(recvBuff);
         snprintf(sendBuff, sizeof(sendBuff), "%d", n);
         write(connfd, sendBuff, strlen(sendBuff)); 
 

@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
        return 1;
     } 
 
-    int n = 30;
+    int n = 3;
     snprintf(sendBuff, sizeof(sendBuff), "%d", n);
     write(sockfd, sendBuff, strlen(sendBuff)); 
 
