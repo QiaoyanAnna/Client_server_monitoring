@@ -18,11 +18,11 @@
 
 int main(int argc, char *argv[])
 {
-    int listenfd = 0, connfd = 0;
+    int listenfd = 0, connfd = 0, valread = 0;
     int port;
     struct sockaddr_in serv_addr; 
 
-    char sendBuff[1025];
+    char sendBuff[3], recvBuff[10];
     time_t ticks; 
 
     if(argc != 2) 
@@ -52,9 +52,16 @@ int main(int argc, char *argv[])
     while(1)
     {
         connfd = accept(listenfd, (struct sockaddr*)NULL, NULL); 
+        valread = read(connfd, recvBuff, sizeof(recvBuff)-1);
+        recvBuff[valread] = 0;
+        fprintf(stdout, "1583256161.99: # 1 (T%3s) from ug11.20295\n", recvBuff);
 
-        ticks = time(NULL);
-        snprintf(sendBuff, sizeof(sendBuff), "%.24s\r\n", ctime(&ticks));
+        if(valread < 0)
+        {
+            fprintf(stderr, "\n Read error \n");
+        } 
+        int n = 10;
+        snprintf(sendBuff, sizeof(sendBuff), "%d", n);
         write(connfd, sendBuff, strlen(sendBuff)); 
 
         close(connfd);

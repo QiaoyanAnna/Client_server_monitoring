@@ -20,13 +20,13 @@ int getPortNum(int argc, char *argv[]) {
     int port;
 
     if (!isNum(argv[1])) {
-        printf("\n Usage: %s <port number> \n", argv[0]);
+        fprintf(stderr, "\n Usage: %s <port number> \n", argv[0]);
         return -1;
     } 
     port = atoi(argv[1]);
     if ((port < MIN_PORT_NUM) || (port > MAX_PORT_NUM))
     {
-        printf("The port must be in the range %d to %d.\n", MIN_PORT_NUM, MAX_PORT_NUM);
+        fprintf(stderr, "The port must be in the range %d to %d.\n", MIN_PORT_NUM, MAX_PORT_NUM);
         return -1;
     }
     

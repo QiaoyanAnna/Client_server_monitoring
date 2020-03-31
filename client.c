@@ -18,14 +18,14 @@
 
 int main(int argc, char *argv[])
 {
-    int sockfd = 0, n = 0; 
+    int sockfd = 0, valread = 0; 
     int port;
-    char recvBuff[1024];
+    char recvBuff[3], sendBuff[10];
     struct sockaddr_in serv_addr; 
 
     if(argc != 3)
     {
-        printf("\n Usage: %s <port number> <ip of server> \n", argv[0]);
+        fprintf(stderr, "\n Usage: %s <port number> <ip of server> \n", argv[0]);
         return 1;
     } 
 
@@ -33,12 +33,10 @@ int main(int argc, char *argv[])
         return -1;
     };
 
-    printf("port: %d\n", port);
-
     memset(recvBuff, '0',sizeof(recvBuff));
     if((sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
     {
-        printf("\n Error : Could not create socket \n");
+        fprintf(stderr, "\n Error : Could not create socket \n");
         return 1;
     } 
 
@@ -49,28 +47,29 @@ int main(int argc, char *argv[])
 
     if(inet_pton(AF_INET, argv[2], &serv_addr.sin_addr)<=0)
     {
-        printf("\n inet_pton error occured\n");
+        fprintf(stderr, "\n inet_pton error occured\n");
         return 1;
     } 
 
     if( connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
     {
-       printf("\n Error : Connect Failed \n");
+       fprintf(stderr, "\n Error : Connect Failed \n");
        return 1;
     } 
 
-    while ( (n = read(sockfd, recvBuff, sizeof(recvBuff)-1)) > 0)
+    int n = 30;
+    snprintf(sendBuff, sizeof(sendBuff), "%d", n);
+    write(sockfd, sendBuff, strlen(sendBuff)); 
+
+    while ( (valread = read(sockfd, recvBuff, sizeof(recvBuff)-1)) > 0)
     {
-        recvBuff[n] = 0;
-        if(fputs(recvBuff, stdout) == EOF)
-        {
-            printf("\n Error : Fputs error\n");
-        }
+        recvBuff[valread] = 0;
+        fprintf(stdout, "1583256162.00: Recv (D%3s)\n", recvBuff);
     } 
 
-    if(n < 0)
+    if(valread < 0)
     {
-        printf("\n Read error \n");
+        fprintf(stderr, "\n Read error \n");
     } 
 
     return 0;
