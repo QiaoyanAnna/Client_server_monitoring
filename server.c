@@ -65,7 +65,6 @@ int main(int argc, char *argv[])
         double waitingTime = ((double) (clock() - startRecv)) / CLOCKS_PER_SEC;
         clock_t serverEnd = clock();
         if (waitingTime > MAX_WAITING_TIME) {
-            printf("waitingTime: %lf\n", waitingTime);
             pthread_kill(ntid, 0);
             double duration = ((double) (serverEnd - serverStart)) / CLOCKS_PER_SEC;
             double transPerSec = numOfTran / duration;
@@ -83,6 +82,7 @@ void *process(void *arg) {
     int listenfd = (int)arg;
     int connfd = 0, valread = 0;
     char sendBuff[8], recvBuff[256];
+    char *nStr, *machine, *token;
     struct timespec spec;
 
     while(1)
@@ -93,22 +93,25 @@ void *process(void *arg) {
         valread = read(connfd, recvBuff, sizeof(recvBuff)-1);
         recvBuff[valread] = 0;
         numOfTran++;
+        token = strtok(recvBuff, "&");
+        nStr = token;
+        machine = strtok(NULL, "&");
         startRecv = clock();
         clock_gettime(CLOCK_REALTIME, &spec);
-        fprintf(stdout, "%ld.%ld: #%3d (T%3s) from ug11.20295\n", spec.tv_sec, getMilliseconds(spec, spec.tv_sec), numOfTran, recvBuff);
+        fprintf(stdout, "%ld.%ld: #%3d (T%3s) from %s\n", spec.tv_sec, getMilliseconds(spec, spec.tv_sec), numOfTran, nStr, machine);
 
         if(valread < 0)
         {
             fprintf(stderr, "\n Read error \n");
         } 
-        n = atoi(recvBuff);
+        n = atoi(nStr);
         Trans(n);
         // send
         memset(sendBuff, '0', sizeof(sendBuff)); 
         snprintf(sendBuff, sizeof(sendBuff), "%d", numOfTran);
         write(connfd, sendBuff, strlen(sendBuff)); 
         clock_gettime(CLOCK_REALTIME, &spec);
-        fprintf(stdout, "%ld.%ld: #%3d (Done) from ug11.20295\n", spec.tv_sec, getMilliseconds(spec, spec.tv_sec), numOfTran);
+        fprintf(stdout, "%ld.%ld: #%3d (Done) from %s\n", spec.tv_sec, getMilliseconds(spec, spec.tv_sec), numOfTran, machine);
         close(connfd);
         sleep(1);
      }

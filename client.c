@@ -23,7 +23,8 @@ int main(int argc, char *argv[])
     int sockfd = 0, valread = 0, numOfTran = 0; 
     int port, n;
     char request;
-    char recvBuff[8], sendBuff[256], outputFileName[128], machinename[64], pidStr[32];
+    char machinename[64], pidStr[32], nStr[8];
+    char recvBuff[8], sendBuff[256], outputFileName[128], packageToSend[256];
     struct sockaddr_in serv_addr; 
     struct timespec spec;
     pid_t pid;
@@ -72,8 +73,9 @@ int main(int argc, char *argv[])
         }
         
         if (request == 'T') {
-            memset(recvBuff, '0',sizeof(recvBuff));
-            memset(sendBuff, '0',sizeof(sendBuff));
+            memset(recvBuff, '0', sizeof(recvBuff));
+            memset(sendBuff, '0', sizeof(sendBuff));
+            memset(packageToSend, '0', sizeof(packageToSend));
             if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
             {
                 fprintf(stderr, "\n Error : Could not create socket \n");
@@ -86,7 +88,11 @@ int main(int argc, char *argv[])
                 return 1;
             } 
             // send
-            snprintf(sendBuff, sizeof(sendBuff), "%d", n);
+            sprintf(nStr, "%d", n); 
+            strcpy(packageToSend, nStr);
+            strcat(packageToSend, "&");
+            strcat(packageToSend, outputFileName);
+            snprintf(sendBuff, sizeof(sendBuff), "%s", packageToSend);
             write(sockfd, sendBuff, strlen(sendBuff)); 
             clock_gettime(CLOCK_REALTIME, &spec);
             fprintf(stdout, "%ld.%ld: Send (T%3s)\n", spec.tv_sec, getMilliseconds(spec, spec.tv_sec), sendBuff);
