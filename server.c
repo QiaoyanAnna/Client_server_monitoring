@@ -13,16 +13,24 @@
 #include <time.h> 
 #include <stdbool.h>
 #include <ctype.h> 
+#include <pthread.h>
 
 #include "verify.h"
+#include "tands.h"
+
+#define MAX_WAITING_TIME 60
+
+int numOfTran = 0;
+clock_t startRecv;
+
+void *process(void *arg);
 
 int main(int argc, char *argv[])
 {
-    int listenfd = 0, connfd = 0, valread = 0;
+    int listenfd = 0;
     int port;
     struct sockaddr_in serv_addr; 
-
-    char sendBuff[3], recvBuff[10];
+    pthread_t ntid;
 
     if(argc != 2) 
     {
@@ -47,27 +55,57 @@ int main(int argc, char *argv[])
 
     listen(listenfd, 10); 
 
-    int numOfTran = 0;
+    clock_t serverStart = clock();
+    startRecv = clock();
+    if( pthread_create( &ntid, NULL, process, (void *) (size_t) listenfd ) ) {
+        fprintf(stderr, "Error occured while creating thread.\n");
+	}
+
+    while (1) {
+        double waitingTime = ((double) (clock() - startRecv)) / CLOCKS_PER_SEC;
+        clock_t serverEnd = clock();
+        if (waitingTime > MAX_WAITING_TIME) {
+            printf("waitingTime: %lf\n", waitingTime);
+            pthread_kill(ntid, 0);
+            double duration = ((double) (serverEnd - serverStart)) / CLOCKS_PER_SEC;
+            double transPerSec = numOfTran / duration;
+            fprintf(stdout, "\nSUMMARY\n");
+            fprintf(stdout, "  14 transactions from ug11.20295\n");
+            fprintf(stdout, "  15 transactions from ug11.20296\n");
+            fprintf(stdout, "%0.1f transactions/sec (%d/%0.1f)\n", transPerSec, numOfTran, duration);
+            break;
+        }
+    }
+}
+
+void *process(void *arg) {
+    int n;
+    int listenfd = (int)arg;
+    int connfd = 0, valread = 0;
+    char sendBuff[3], recvBuff[10];
+
     while(1)
     {
         connfd = accept(listenfd, (struct sockaddr*)NULL, NULL); 
-        
+        // receive
         memset(recvBuff, '0',sizeof(recvBuff));
         valread = read(connfd, recvBuff, sizeof(recvBuff)-1);
         recvBuff[valread] = 0;
-        fprintf(stdout, "1583256161.99: # 1 (T%3s) from ug11.20295\n", recvBuff);
+        numOfTran++;
+        startRecv = clock();
+        fprintf(stdout, "1583256161.99: #%3d (T%3s) from ug11.20295\n", numOfTran, recvBuff);
 
         if(valread < 0)
         {
             fprintf(stderr, "\n Read error \n");
         } 
-
-        numOfTran++;
-        printf("numOfTran: %d\n", numOfTran);
+        n = atoi(recvBuff);
+        Trans(n);
+        // send
         memset(sendBuff, '0', sizeof(sendBuff)); 
         snprintf(sendBuff, sizeof(sendBuff), "%d", numOfTran);
         write(connfd, sendBuff, strlen(sendBuff)); 
-
+        fprintf(stdout, "1583256161.99: #%3d (Done) from ug11.20295\n", numOfTran);
         close(connfd);
         sleep(1);
      }
