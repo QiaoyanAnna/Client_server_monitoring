@@ -20,6 +20,7 @@
 
 #define MAX_WAITING_TIME 30
 #define MAX_NUMBER_OF_MACHINE 1000
+#define _POSIX_C_SOURCE 200809L
 
 int numOfTran = 0, numOfConn = 0;
 clock_t startRecv, serverEnd, serverStart;
