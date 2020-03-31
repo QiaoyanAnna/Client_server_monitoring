@@ -3,13 +3,13 @@ all: server client
 server: server.o verify.o tands.o
 	gcc -Wall -pthread -o server server.o verify.o tands.o -lm
 
-server.o: server.c verify.h tands.h
+server.o: server.c
 	gcc -Wall -c server.c
 
 client: client.o verify.o tands.o
 	gcc -Wall -o client client.o verify.o tands.o -lm
 
-client.o: client.c verify.h tands.h
+client.o: client.c
 	gcc -Wall -c client.c
 
 verify.o: verify.c verify.h
