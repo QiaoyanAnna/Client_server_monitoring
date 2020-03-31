@@ -84,6 +84,14 @@ int main(int argc, char *argv[])
             break;
         }
     }
+
+    for (int i = 0; i < numOfConn; i++) {
+        free(conn[numOfConn]->machineName);
+        free(conn[numOfConn]->numOfTrans);
+    }
+    free(conn[numOfConn]);
+    free(conn);
+    
 }
 
 void *process(void *arg) {

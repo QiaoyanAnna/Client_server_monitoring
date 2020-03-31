@@ -95,7 +95,7 @@ int main(int argc, char *argv[])
             snprintf(sendBuff, sizeof(sendBuff), "%s", packageToSend);
             write(sockfd, sendBuff, strlen(sendBuff)); 
             clock_gettime(CLOCK_REALTIME, &spec);
-            fprintf(stdout, "%ld.%02ld: Send (T%3s)\n", spec.tv_sec, getMilliseconds(spec, spec.tv_sec), sendBuff);
+            fprintf(stdout, "%ld.%02ld: Send (T%3d)\n", spec.tv_sec, getMilliseconds(spec, spec.tv_sec), n);
             numOfTran++;
             // receive
             valread = read(sockfd, recvBuff, sizeof(recvBuff)-1);
