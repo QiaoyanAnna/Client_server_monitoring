@@ -1,14 +1,14 @@
 .TH SERVER 1 "31 March 20"
 .SH NAME
-server /- Execute transctions
+server \- Execute transactions
 .SH SYNOPSIS
-/fBserver/fP
-/fIportnumber/fP
+\fBserver\fP
+\fIport\fP
 .SH DESCRIPTION
-/fBserver/fP listens for messages from different clients on the /fBport/fP.
+\fBserver\fP listens for messages from different clients on the \fIport\fP.
 When a message is received, it will process it
 and then wait for another message.
-/fBport/fP must be in the range 5,000 to 64,000.
+\fIport\fP must be in the range 5,000 to 64,000.
 .SH RETURN VALUES
 If successful, return 0. Otherwise, an error message will be printed.
 .SH BUGS
