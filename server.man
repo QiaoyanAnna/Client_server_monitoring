@@ -13,4 +13,4 @@ and then wait for another message.
 If successful, return 0. Otherwise, an error message will be printed.
 .SH BUGS
 Due to security measures (including restrictions on port usage and firewalls), 
-client might not be able to make the connections needed.
+server might not be able to make the connections needed.

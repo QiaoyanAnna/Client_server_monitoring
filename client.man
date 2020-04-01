@@ -1,0 +1,20 @@
+.TH CLIENT 1 "31 March 20"
+.SH NAME
+client \- pass transactions received to a server
+.SH SYNOPSIS
+\fBclient\fP
+\fIport\fP
+\fIip_address\fP
+.SH DESCRIPTION
+\fBclient\fP creates a process that will send its transaction to the machine 
+that is hosting a server on the \fIip_address\fP. 
+The process reads in a series of \fBT<n>\fP and \fBS<n>\fP commands.
+The \fBT<n>\fP commands get sent to the server to be executed,
+while the \fBS<n>\fP command causes the client to wait.
+\fIport\fP must be in the range 5,000 to 64,000 and
+must be the same number that the server use.
+.SH RETURN VALUES
+If successful, return 0. Otherwise, an error message will be printed.
+.SH BUGS
+Due to security measures (including restrictions on port usage and firewalls), 
+client might not be able to make the connections needed.
