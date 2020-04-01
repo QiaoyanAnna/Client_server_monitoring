@@ -20,7 +20,7 @@
 #include "verify.h"
 #include "tands.h"
 
-#define MAX_WAITING_TIME 30
+#define MAX_WAITING_TIME 60
 #define MAX_NUMBER_OF_MACHINE 1000
 
 int numOfTran = 0, numOfConn = 0;
@@ -90,7 +90,8 @@ int main(int argc, char *argv[])
         free(conn[i]);
     }
     free(conn);
-    
+
+    return 0;
 }
 
 void *process(void *arg) {
@@ -110,7 +111,6 @@ void *process(void *arg) {
         valread = read(connfd, recvBuff, sizeof(recvBuff)-1);
         recvBuff[valread] = 0;
         clock_gettime(CLOCK_REALTIME, &spec);
-        serverEnd = clock();
         numOfTran++;
         nStr = strtok(recvBuff, "&");
         machine = strtok(NULL, "&");
@@ -157,6 +157,7 @@ void *process(void *arg) {
         write(connfd, sendBuff, strlen(sendBuff)); 
         clock_gettime(CLOCK_REALTIME, &spec);
         fprintf(stdout, "%ld.%02ld: #%3d (Done) from %s\n", spec.tv_sec, getMilliseconds(spec, spec.tv_sec), numOfTran, machine);
+        serverEnd = clock();
         close(connfd);
         
      }
